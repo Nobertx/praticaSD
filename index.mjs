@@ -21,9 +21,9 @@ app.get('/noel', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-  res.send('Hello Post!')
+  res.send('Escolha a rota: /hello, /clientes, /noel')
 });
 
-app.listen(process.env.PORT || 8000, () => {
+app.listen(process.env.PORT ||8000, () => {
   console.log('App Started...');
 })
