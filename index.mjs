@@ -16,6 +16,10 @@ app.get('/clientes', (req, res) => {
   res.send(['Mathias', 'José', 'Thiago'])
 });
 
+app.get('/noel', (req, res) => {
+  res.send('Hello Noel!')
+});
+
 app.post('/', (req, res) => {
   res.send('Hello Post!')
 });
