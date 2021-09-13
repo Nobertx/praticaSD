@@ -20,7 +20,7 @@ app.get('/noel', (req, res) => {
   res.send('Hello Noel!')
 });
 
-app.post('/', (req, res) => {
+app.get('/', (req, res) => {
   res.send('Escolha a rota: /hello, /clientes, /noel')
 });
 
