@@ -17,7 +17,7 @@ app.get('/clientes', (req, res) => {
 });
 
 app.get('/noel', (req, res) => {
-  res.send('Hello Noel!')
+  res.send('Hello Noelz!')
 });
 
 app.get('/', (req, res) => {
