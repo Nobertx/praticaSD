@@ -5,7 +5,7 @@ app.use(express.urlencoded({extended:true}));
 
 let info = {"server_name": "noel",
   "server_endpoint": "https://sd-emmanuel.herokuapp.com/",
-  "descricao": "Projeto de SD. Os seguintes serviços estão implementados: info",
+  "descricao": "Projeto de SD. Os seguintes serviços estão implementados: [GET][PUT]/info, [GET]/peers",
   "versao": "0.1",
   "status": "online",
   "tipo_de_eleicao_ativa": "ring"}
