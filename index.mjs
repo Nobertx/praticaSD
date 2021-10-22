@@ -97,7 +97,7 @@ app.get('/noel', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Escolha a rota: /hello, /info')
+  res.send('Escolha a rota: /hello, /info, /peers')
 });
 
 app.get('/info', (req, res) => {
@@ -107,7 +107,7 @@ app.get('/info', (req, res) => {
 
 app.get('/peers',(req,res)=>{
 
-  res.send(peers);
+  res.send(peers)
 
 })
 
