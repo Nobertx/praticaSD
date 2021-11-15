@@ -100,17 +100,13 @@ app.get('/', (req, res) => {
   res.send('Escolha a rota: /hello, /info, /peers')
 });
 
+//get_info OK!
 app.get('/info', (req, res) => {
 
   res.send(info);
 });
 
-app.get('/peers',(req,res)=>{
-
-  res.send(peers)
-
-})
-
+//put_info OK!
 app.put('/info',(req, res) => {
   let json = JSON.stringify(req.body);
 
@@ -143,6 +139,66 @@ app.put('/info',(req, res) => {
   res.send('As informações foram atualizadas!')
 });
 
+//get_peers OK!
+app.get('/peers',(req,res)=>{
+
+  res.send(peers)
+
+})
+
+//post_peers OK!
+app.post('/peers', (req, res) => {
+
+  let peers_novo = [
+    'id',
+    'nome',
+    'url'
+  ];
+
+  console.log(req.body)
+
+  let check = true;
+
+        if (check) {
+          let conteudo = JSON.stringify(req.body);
+
+          // Checa se foram inseridas as 3 chaves
+          if (!peers_novo.every(element => conteudo.includes(element))) {
+            check = false
+            return res.status(400).json({ status: 400, message: `Não foram inseridas todas as chaves!` });
+          }
+        }
+
+        if (check) {
+          if (!(typeof req.body.nome === 'string' || req.body.nome instanceof String) || !(typeof req.body.url === 'string' || req.body.url instanceof String)) {
+            check = false;
+            return res.status(400).json({ status: 400, message: `ID e/ou nome não é string` });
+          }
+        }
+      if (check) {
+        for (var i = 0; i < peers.length; i++) {
+          if (peers[i].id == req.body.id && peers[i].nome == req.body.nome) {
+            check = false;
+            return res.status(409).json({ status: 409, message: `ID e nome inseridos já existe` });
+          }
+          else if (peers[i].id == req.body.id) {
+            check = false;
+            return res.status(409).json({ status: 409, message: `ID inserido já existe` });
+          } else if (peers[i].nome == req.body.nome) {
+            check = false;
+            return res.status(409).json({ status: 409, message: `Esse nome já existe` });
+          }
+        }
+      }
+
+        peers.push(req.body);
+        let json = JSON.stringify(peers_novo);
+
+        res.send(req.body);
+
+});
+
+//ta feito (eu acho)
 app.post('/resolver', (req, res) => {
   let url = {
     'Allana' : 'https://sd-ascampos-20212.herokuapp.com/',
