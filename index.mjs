@@ -198,6 +198,95 @@ app.post('/peers', (req, res) => {
 
 });
 
+app.put('/peers/:id', (req, res) => {
+
+  let peers_novo = [
+    'id',
+    'nome',
+    'url'
+  ];
+
+  let check = true;
+
+  let id = req.params.id;
+
+      // Checagem da requisição antes de tentar editar
+      if (Object.values(req.body).length === 0) {          // Checa se o JSON está vazio
+        check = false;
+        return res.status(400).json({ status: 400, message: 'Faça alguma requisição.' });
+      } else {
+        Object.keys(req.body).some(function (key) {
+          if (!key && !req.body[key]) {
+            check = false;
+            return res.status(400).json({ status: 400, message: 'Sem parametros.' });
+          } else if (!key) {
+            check = false;
+            return res.status(400).json({ status: 400, message: 'Por favor insira uma chave.' });
+          } else if (!req.body[key]) {
+            check = false;
+            return res.status(400).json({ status: 400, message: `Chave '${key}' sem valor.` });
+          } else if (!peers_novo.includes(key)) {          // Checa se o nome da chave é válido
+            check = false;
+            return res.status(400).json({ status: 400, message: `A chave '${key}' não é válida.` });
+          }
+        });
+        if (!check) {
+          return false;
+        }
+      }
+
+      // Checar se o ID solicitado na requisição é usado por outro usuário (evitar duplicidade)
+      check = true;
+
+      // Checa se o nome e o ID solicitado para alteração já não é usado por outro usuário
+      for (var i = 0; i < peers.length; i++) {
+        if ((peers[i].id == req.body.id || peers[i].nome == req.body.nome) && id != req.body.id) {
+
+          check = false;
+          return res.status(409).json({ status: 409, message: `Esse ID ou nome já existe na base de dados.` });
+        }
+      }
+
+      // Caso o nome e ID não esteja sendo usado por outro usuário
+      if (check) {
+        check = false;
+        for (var i = 0; i < peers.length; i++) {
+          if (peers[i].id == id) {
+
+            // Essas checagens ocorrem porque algumas chaves podem ser passadas vazias, ou alterar apenas parcialmente
+            if (req.body.id) {
+              peers[i].id = req.body.id;
+            }
+
+            if (req.body.nome) {
+              peers[i].nome = req.body.nome;
+            }
+
+            if (req.body.url) {
+              peers[i].url = req.body.url;
+            }
+
+            check = true;
+            break;
+          }
+        }
+      }
+
+      if (check) {
+        // Adiciona o novo objeto no conjunto
+
+        var json = JSON.stringify(peers);
+        console.log(req.body)
+
+          res.send(req.body);
+
+      } else {
+        // Caso não ache um usuário associado ao ID
+        return res.status(404).json({status: 404, message: `O ID '${id}' não foi encontrado.`});
+      }
+
+});
+
 //ta feito (eu acho)
 app.post('/resolver', (req, res) => {
   let url = {
