@@ -5,7 +5,7 @@ app.use(express.urlencoded({extended:true}));
 
 let info = {"server_name": "noel",
   "server_endpoint": "https://sd-emmanuel.herokuapp.com/",
-  "descricao": "Projeto de SD. Os seguintes serviços estão implementados: [GET][PUT]/info, [GET][POST][PUT]/peers",
+  "descricao": "Projeto de SD. Os seguintes serviços estão implementados: [GET][PUT]/info, [GET][POST][PUT][DELETE]/peers",
   "versao": "1.0",
   "status": "online",
   "tipo_de_eleicao_ativa": "ring"}
@@ -299,6 +299,31 @@ app.put('/peers/:id', (req, res) => {
       } else {
         // Caso não ache um usuário associado ao ID
         return res.status(404).json({status: 404, message: `O ID '${id}' não foi encontrado.`});
+      }
+
+});
+
+//delete_peers OK!
+app.delete('/peers/:id', (req, res) => {
+
+  let id = req.params.id;
+  let check = false;
+
+      // Removendo peer
+      for (var i = 0; i < peers.length; i++) {
+        if (peers[i].id == id) {
+          peers.splice(i, 1);
+          check = true;
+          break;
+        }
+      }
+
+      if (check) {
+        var json = JSON.stringify(peers);
+          return res.status(200).json({ status: 200, message: `O peer selecionado foi removido com sucesso!` });
+      } else {
+        // Caso não encontre o ID
+        return res.status(404).json({ status: 404, message: `O ID '${id}' não foi encontrado.` });
       }
 
 });
