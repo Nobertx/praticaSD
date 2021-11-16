@@ -5,8 +5,8 @@ app.use(express.urlencoded({extended:true}));
 
 let info = {"server_name": "noel",
   "server_endpoint": "https://sd-emmanuel.herokuapp.com/",
-  "descricao": "Projeto de SD. Os seguintes serviços estão implementados: [GET][PUT]/info, [GET]/peers",
-  "versao": "0.1",
+  "descricao": "Projeto de SD. Os seguintes serviços estão implementados: [GET][PUT]/info, [GET][POST][PUT]/peers",
+  "versao": "1.0",
   "status": "online",
   "tipo_de_eleicao_ativa": "ring"}
 
@@ -146,6 +146,21 @@ app.get('/peers',(req,res)=>{
 
 })
 
+//get_peers_id
+app.get('/peers/:id', (req, res) => {
+
+  let id = req.params.id;
+
+      for (var i = 0; i < peers.length; i++) {
+        if (peers[i].id == id) {
+          return res.send(peers[i]); // Caso ache um usuário com o ID solicitado
+        }
+      }
+
+      // Caso não encontre o ID
+      return res.status(404).json({ status: 404, message: `O ID '${id}' não existe` });
+});
+
 //post_peers OK!
 app.post('/peers', (req, res) => {
 
@@ -198,6 +213,7 @@ app.post('/peers', (req, res) => {
 
 });
 
+//put_peers OK!
 app.put('/peers/:id', (req, res) => {
 
   let peers_novo = [
@@ -287,7 +303,7 @@ app.put('/peers/:id', (req, res) => {
 
 });
 
-//ta feito (eu acho)
+//ta feito
 app.post('/resolver', (req, res) => {
   let url = {
     'Allana' : 'https://sd-ascampos-20212.herokuapp.com/',
