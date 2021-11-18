@@ -3,6 +3,8 @@ const app = express()
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+const { v4: uuidv4 } = require('uuid');
+
 let info = {"server_name": "noel",
   "server_endpoint": "https://sd-emmanuel.herokuapp.com/",
   "descricao": "Projeto de SD. Os seguintes serviços estão implementados: [GET][PUT]/info, [GET][POST][PUT][DELETE]/peers",
@@ -82,6 +84,12 @@ let peers = [
     "url": "https://sd-victor-20212.herokuapp.com/"
   }
 ]
+
+let validade = -1;
+let codigo = -1;
+let valor = -1;
+let cont = 0;
+let eleicoes_em_andamento = [];
 
 app.get('/hello', (req, res) => {
   if(req.query.name) {
@@ -226,7 +234,7 @@ app.put('/peers/:id', (req, res) => {
 
   let id = req.params.id;
 
-      // Checagem da requisição antes de tentar editar
+      // Checagens
       if (Object.values(req.body).length === 0) {          // Checa se o JSON está vazio
         check = false;
         return res.status(400).json({ status: 400, message: 'Faça alguma requisição.' });
@@ -352,6 +360,116 @@ app.post('/resolver', (req, res) => {
   }
   else {
     res.send('Nome nao encontrado.');
+  }
+});
+
+function retornar_recurso() {
+  codigo = uuidv4();
+  validade = new Date();
+  validade.setSeconds(validade.getSeconds() + 10);
+  valor = 1;
+
+  let json = {
+    "codigo_de_acesso": codigo,
+    "validade": validade,
+  };
+
+  return (json);
+}
+
+//get_recurso OK!
+app.get('/recurso', (req, res) => {
+  let codigo_acesso = req.body.codigo_de_acesso
+
+  if (codigo == codigo_acesso) {
+    if (validade != -1) {
+      let data = new Date();
+
+      if (data / 1000 < validade / 1000) {  // Menor que 10 segundos
+        res.send({ "valor": valor })
+      } else {
+        return res.status(401).json({ status: 401, message: 'Código expirado.' });
+      }
+    } else {
+      return res.status(401).json({ status: 401, message: 'Expiração inválida, gere um código primeiro.' });
+    }
+
+  } else {
+    return res.status(401).json({ status: 401, message: 'Código inválido.' });
+  }
+});
+
+//put_recurso OK!
+app.put('/recurso', (req, res) => {
+  let codigo_acesso = req.body.codigo_de_acesso
+  let valor_novo = req.body.valor;
+
+  if (codigo == codigo_acesso) {
+    if (validade != -1) {
+      let data = new Date();
+
+      if (data / 1000 < validade / 1000) {  // Menor que 10 segundos
+
+        valor = valor_novo;
+
+        let json = {
+          "codigo_de_acesso": codigo,
+          "valor": valor
+        }
+
+        res.send(json);
+      } else {
+        return res.status(401).json({ status: 401, message: 'Código expirado.' });
+      }
+    } else {
+      return res.status(401).json({ status: 401, message: 'Expiração inválida, gere um código primeiro.' });
+    }
+
+  } else {
+    return res.status(401).json({ status: 401, message: 'Código inválido.' });
+  }
+});
+
+//post_recurso OK!
+app.post('/recurso', (req, res) => {
+
+  // Primeiro uso
+  if (validade == -1) {
+    res.send(retornar_recurso());
+  } else {
+    let data = new Date();
+
+    if (data / 1000 < validade / 1000) {  // Menor que 10 segundos
+      return res.status(409).json({ status: 409, message: `Recurso sendo utilizado` });
+    } else {
+      res.send(retornar_recurso());
+    }
+  }
+});
+
+//delete_recurso OK!
+app.delete('/recurso', (req, res) => {
+  let codigo_acesso = req.body.codigo_de_acesso
+
+  if (codigo == codigo_acesso) {
+    if (expiracao != -1) {
+      let data = new Date();
+
+      if (data / 1000 < validade / 1000) {  // Menor que 10 segundos
+        validade = -1;
+        codigo = -1;
+        valor = -1;
+
+        res.sendStatus(200);
+      } else {
+        return res.status(410).json({ status: 410, message: 'Código expirado.' });
+      }
+    } else {
+      return res.status(410).json({ status: 410, message: 'Expiração inválida, gere um código primeiro.' });
+    }
+
+  } else {
+    return res.status(410).json({ status: 410, message: 'Código inválido.' });
   }
 });
 
