@@ -8,7 +8,7 @@ let info = {"server_name": "noel",
   "descricao": "Projeto de SD. Os seguintes serviços estão implementados: [GET][PUT]/info, [GET][POST][PUT][DELETE]/peers, [GET]/recurso",
   "versao": "1.0",
   "status": "online",
-  "tipo_de_eleicao_ativa": "ring"}
+  "tipo_de_eleicao_ativa": "bully"}
 
 let peers = [
   {
